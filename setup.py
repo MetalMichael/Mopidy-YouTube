@@ -23,7 +23,12 @@ setup(
     zip_safe=False,
     include_package_data=True,
     install_requires=[
-        'requests >= 2.2.1',
+        'setuptools',
+        'apiclient',
+        'urllib3',
+        'google-api-python-client',
+        'iso8601',
+        'isodate',
         'Mopidy >= 0.18',
         'Pykka >= 1.1',
     ],

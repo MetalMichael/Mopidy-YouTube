@@ -15,17 +15,15 @@ logger = logging.getLogger(__name__)
 
 
 class YoutubeLibraryProvider(backend.LibraryProvider):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config, *args, **kwargs):
+        self.config = config;
         super(YoutubeLibraryProvider, self).__init__(*args, **kwargs)
 
-    def find_exact(self, query=None, uris=None):
-        return self.search(query, uris)
-
-    def lookup(self, url):
-        logger.info("Looking Up Youtube Video: " + url)
+    def lookup(self, uri):
+        logger.info("Looking Up Youtube Video: " + uri)
 
         #Most important part. Location of the FLV
-        URL = translator.uriToVideo(url)
+        URL = translator.uriToVideo(uri)
 
         #Get the track info
         
@@ -46,10 +44,10 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
             )
             return [youtube_track]
 
-        output = callback(session.lookup(url))
+        output = callback(session.lookup(uri))
         return output
 
-    def search(self, query=None, uris=None):
+    def search(self, query=None, uris=None, exact=False):
         if query is None:
             return SearchResult(uri='youtube:search')
     
@@ -64,7 +62,7 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
                 tracks=[translator.to_mopidy_track(t) for t in results])
             future.set(search_result)
 
-        session.search(
+        session.search(self,
             youtube_query, callback,
             track_count=50)
 

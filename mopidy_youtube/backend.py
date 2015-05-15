@@ -16,7 +16,7 @@ class YoutubeBackend(pykka.ThreadingActor, backend.Backend):
 
         self.config = config
         
-        self.library = YoutubeLibraryProvider(backend=self)
+        self.library = YoutubeLibraryProvider(config, backend=self)
         self.playback = backend.PlaybackProvider(audio=audio, backend=self)
 
-        self.uri_schemes = ['http']
+        self.uri_schemes = ['youtube']
