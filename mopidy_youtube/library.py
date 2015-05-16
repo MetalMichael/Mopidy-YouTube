@@ -23,30 +23,18 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
         logger.info("Looking Up Youtube Video: " + uri)
 
         #Most important part. Location of the FLV
-        URL = translator.uriToVideo(uri)
+        url = translator.uriToVideo(uri)
 
         #Get the track info
         
-        #future = pykka.ThreadingFuture()
-        def callback(track, userdata=None):
-            if not track:
-                return False
-            artist = Artist(uri="http://www.youtube.com/user/" + track["uploader"]["uri"], name=track["uploader"]["name"])
-            youtube_track = Track(
-                uri=URL,
-                name=track["title"],
-                artists=[artist],
-                album=translator.dummy_mopidy_album(artist, track["date"]),
-                track_no=0,
-                date=dateutil.parser.parse(track["date"]),
-                length=int(track["length"])*1000,
-                bitrate=self.backend.config['youtube']['bitrate']
-            )
-            return [youtube_track]
 
-        output = callback(session.lookup(uri))
+        output = [session.lookup(self, uri, url)]
+        
         return output
-
+        
+    def find_exact(self, query=None, uris=None):
+        return self.search(query, uris)
+        
     def search(self, query=None, uris=None, exact=False):
         if query is None:
             return SearchResult(uri='youtube:search')
@@ -59,7 +47,7 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
         def callback(results, userdata=None):
             search_result = SearchResult(
                 uri='youtube:search',
-                tracks=[translator.to_mopidy_track(t) for t in results])
+                tracks=[translator.to_mopidy_track(t, '') for t in results])
             future.set(search_result)
 
         session.search(self,

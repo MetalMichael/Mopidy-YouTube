@@ -17,11 +17,9 @@ logger = logging.getLogger(__name__)
 track_cache = {}
 artist_cache = {}
 
-def to_mopidy_track(youtube_track):
+def to_mopidy_track(youtube_track, url):
     if youtube_track is None:
         return
-    
-    #print youtube_track
         
     uri = idToUri(youtube_track['id'])
     if uri in track_cache:
@@ -30,8 +28,13 @@ def to_mopidy_track(youtube_track):
     date = youtube_track['snippet']['publishedAt']
     artist = to_mopidy_artist(youtube_track['snippet']['channelId'], youtube_track['snippet']['channelTitle'])
     
+    if url:
+        trackUri = url
+    else:
+        trackUri = uri
+    
     track_cache[uri] = models.Track(
-        uri=uri,
+        uri=trackUri,
         name=youtube_track['snippet']['title'],
         artists=[artist],
         album=dummy_mopidy_album(artist, date),
@@ -88,7 +91,7 @@ def uriToVideo(uri):
     if not id:
         return [];
     
-    url = subprocess.Popen(["youtube-dl", "-g", 'http://www.youtube.com/watch?v=%s' + id], stdout=subprocess.PIPE)
+    url = subprocess.Popen(["youtube-dl", "-g", 'http://www.youtube.com/watch?v=' + id], stdout=subprocess.PIPE)
     flvlocation = url.communicate()[0].strip()
 
     logger.info('Youtube-dl returned location of VideoID: %s' % id)

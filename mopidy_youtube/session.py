@@ -10,13 +10,14 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from oauth2client.tools import argparser
 
+from . import translator
+
 logger = logging.getLogger('mopidy.backends.youtube')
 
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
 def search(context, query, callback, track_count):
-
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
         developerKey=context.config['youtube']['apikey'])
         
@@ -45,29 +46,15 @@ def search(context, query, callback, track_count):
     callback(videos)
 
 #def lookup(query, callback):
-def lookup(query):   
-    track = make_request(query, {'alt': 'json'})
-    try:
-        track = json.loads(track.text)
-    except ValueError:
-        logger.error('YoutubeBackend Error: ' + track.text)
-        return False
-    trackInfo = track["entry"]
+def lookup(context, uri, url):
+    youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
+        developerKey=context.config['youtube']['apikey'])
     
-    return {'title': trackInfo ["title"]["$t"],
-        'id': trackInfo["id"]["$t"],
-        'date': trackInfo["published"]["$t"],
-        'length': trackInfo["media$group"]["yt$duration"]["seconds"],
-        'uploader': {'name': trackInfo["author"][0]["name"]["$t"], 'uri': trackInfo["author"][0]["uri"]["$t"]}
-    }
-
-def make_request(url, parameters):
-    try:
-         r = requests.get(url, params = parameters)
-    except (ConnectionError, Timeout):
-        logger.error('YoutubeBackend Error: Cannot connect to ' + url)
-        return false
-    except HTTPError:
-        logger.error('YoutubeBackend Error: HTTP error')
-        return false
-    return r
+    youtubeId = translator.uriToId(uri)
+    
+    search_response = youtube.videos().list(
+        id=youtubeId,
+        part="snippet,contentDetails"
+      ).execute()
+    
+    return translator.to_mopidy_track(search_response['items'][0], url);
