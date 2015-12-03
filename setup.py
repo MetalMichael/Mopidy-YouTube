@@ -31,6 +31,9 @@ setup(
         'isodate',
         'Mopidy >= 0.18',
         'Pykka >= 1.1',
+        'python-dateutil',
+        'httplib2 >= 0.9.1',
+        'youtube-dl'
     ],
     test_suite='nose.collector',
     tests_require=[
