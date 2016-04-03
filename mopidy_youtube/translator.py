@@ -19,6 +19,7 @@ artist_cache = {}
 
 def to_mopidy_track(youtube_track, url):
     if youtube_track is None:
+        logger.info("No Track Returned")
         return
         
     uri = idToUri(youtube_track['id'])

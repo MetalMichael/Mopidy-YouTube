@@ -13,7 +13,6 @@ from mopidy.models import Track, Artist, Album, SearchResult
 
 logger = logging.getLogger(__name__)
 
-
 class YoutubeLibraryProvider(backend.LibraryProvider):
     def __init__(self, config, *args, **kwargs):
         self.config = config;
@@ -26,8 +25,6 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
         url = translator.uriToVideo(uri)
 
         #Get the track info
-        
-
         output = [session.lookup(self, uri, url)]
         
         return output

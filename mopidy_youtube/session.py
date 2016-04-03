@@ -25,7 +25,7 @@ def search(context, query, callback, track_count):
         q=query,
         part="snippet,id",
         maxResults=track_count,
-        videoCategoryId="music",
+        videoCategoryId="10",
         type="video"
       ).execute()
    
