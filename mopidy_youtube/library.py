@@ -23,12 +23,9 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
 
         #Most important part. Location of the FLV
         url = translator.uriToVideo(uri)
-        logger.info("URL:" + url)
 
         #Get the track info
         output = [session.lookup(self, uri, url)]
-        
-        logger.info(output)
         
         return output
         
