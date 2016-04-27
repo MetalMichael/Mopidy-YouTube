@@ -57,4 +57,4 @@ def lookup(context, uri, url):
         part="snippet,contentDetails"
       ).execute()
     
-    return translator.to_mopidy_track(search_response['items'][0], url);
+    return translator.to_mopidy_track(search_response['items'][0], True, url);

@@ -23,9 +23,12 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
 
         #Most important part. Location of the FLV
         url = translator.uriToVideo(uri)
+        logger.info("URL:" + url)
 
         #Get the track info
         output = [session.lookup(self, uri, url)]
+        
+        logger.info(output)
         
         return output
         
@@ -44,7 +47,7 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
         def callback(results, userdata=None):
             search_result = SearchResult(
                 uri='youtube:search',
-                tracks=[translator.to_mopidy_track(t, '') for t in results])
+                tracks=[translator.to_mopidy_track(t, False, NULL) for t in results])
             future.set(search_result)
 
         session.search(self,

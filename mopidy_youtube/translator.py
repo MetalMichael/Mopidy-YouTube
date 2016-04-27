@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 track_cache = {}
 artist_cache = {}
 
-def to_mopidy_track(youtube_track, url):
+def to_mopidy_track(youtube_track, addUrl, url=None):
     if youtube_track is None:
         logger.info("No Track Returned")
         return
@@ -29,7 +29,7 @@ def to_mopidy_track(youtube_track, url):
     date = youtube_track['snippet']['publishedAt']
     artist = to_mopidy_artist(youtube_track['snippet']['channelId'], youtube_track['snippet']['channelTitle'])
     
-    if url:
+    if addUrl:
         trackUri = url
     else:
         trackUri = uri
