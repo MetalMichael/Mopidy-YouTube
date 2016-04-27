@@ -14,17 +14,12 @@ from mopidy import models
 
 logger = logging.getLogger(__name__)
 
-track_cache = {}
-artist_cache = {}
-
 def to_mopidy_track(youtube_track, addUrl, url=None):
     if youtube_track is None:
         logger.info("No Track Returned")
         return
         
     uri = idToUri(youtube_track['id'])
-    if uri in track_cache:
-        return track_cache[uri]
         
     date = youtube_track['snippet']['publishedAt']
     artist = to_mopidy_artist(youtube_track['snippet']['channelId'], youtube_track['snippet']['channelTitle'])
@@ -34,7 +29,7 @@ def to_mopidy_track(youtube_track, addUrl, url=None):
     else:
         trackUri = uri
     
-    track_cache[uri] = models.Track(
+    return models.Track(
         uri=trackUri,
         name=youtube_track['snippet']['title'],
         artists=[artist],
@@ -43,16 +38,11 @@ def to_mopidy_track(youtube_track, addUrl, url=None):
         date=isoToUnix(date),
         length=isoToDuration(youtube_track['contentDetails']['duration']),
         bitrate=320)
-    return track_cache[uri]
 
 def to_mopidy_artist(channelId, channelTitle):
     uri = "youtube:channel:%s" % channelId
     
-    if uri in artist_cache:
-        return artist_cache[uri]
-        
-    artist_cache[uri] = models.Artist(uri=uri, name=channelTitle)
-    return artist_cache[uri]
+    return models.Artist(uri=uri, name=channelTitle)
 
 def dummy_mopidy_album(artist, date):
     return models.Album(

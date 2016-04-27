@@ -47,7 +47,7 @@ class YoutubeLibraryProvider(backend.LibraryProvider):
         def callback(results, userdata=None):
             search_result = SearchResult(
                 uri='youtube:search',
-                tracks=[translator.to_mopidy_track(t, False, NULL) for t in results])
+                tracks=[translator.to_mopidy_track(t, False, None) for t in results])
             future.set(search_result)
 
         session.search(self,
